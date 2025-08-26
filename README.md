@@ -7,5 +7,5 @@ Para garantir a qualidade e relevância do estudo, seguimos princípios fundamen
 
 - **Statistical Power**: Garantia de um número adequado de amostras. Atualmente, o dataset inclui **N = 32 sujeitos**, cada um com **1 hora de aquisição**.  
 - **Mitigação de viés**: As anotações são realizadas por múltiplos anotadores (> 2), independentes do autor dos métodos, todos com expertise em sinais fisiológicos.  
-- **Blind annotation**: A anotação é feita de forma **cega**, evitando o conhecimento de variáveis potencialmente confundentes que possam enviesar o processo.  
+- **Blind annotation**: A anotação é feita de forma **cega**, evitando o conhecimento de variáveis potencialmente "confounding" que possam enviesar o processo.  
 - **Critérios bem definidos**: Utilização de **guidelines consistentes e baseadas em literatura prévia**, assegurando a comparabilidade e a reprodutibilidade dos resultados.  
