@@ -1,10 +1,11 @@
 # Sock_MotionArtifacts
-Este repositório serve de plataforma para a anotação de sinais de EDA para a produção de um artigo científico de elevado impacto.
+## 📌 Descrição do Projeto
 
-O que define um paper com elevado impacto?
-... além de muitos outros detalhes,
-- **Statistical Power**: Ter amostras (N) suficientes. Para este projeto, temos atualmente N = 32 sujeitos x 1 hora de aquisição
-- **Mitigação de viés**: Ter várias fontes de anotação de dados. Isto é, autores que não o autor que fez os métodos, em número suficiente (> 2) e com expertise no tipo de sinais
-- **Critérios bem definidos**: Usar critérios bem definidos para a anotação de dados, possivelmente baseados em critérios anteriormente utilizados por outros autores.
+Este repositório serve como plataforma para a **anotação de sinais de EDA**, no âmbito da produção de um artigo científico de elevado impacto.  
 
+Para garantir a qualidade e relevância do estudo, seguimos princípios fundamentais de investigação científica:  
 
+- 📈 **Statistical Power**: Garantia de um número adequado de amostras. Atualmente, o dataset inclui **N = 32 sujeitos**, cada um com **1 hora de aquisição**.  
+- 🧑‍🔬 **Mitigação de viés**: As anotações são realizadas por múltiplos anotadores (> 2), independentes do autor dos métodos, todos com expertise em sinais fisiológicos.  
+- 🔒 **Blind annotation**: A anotação é feita de forma **cega**, evitando o conhecimento de variáveis potencialmente confundentes que possam enviesar o processo.  
+- 📑 **Critérios bem definidos**: Utilização de **guidelines consistentes e baseadas em literatura prévia**, assegurando a comparabilidade e a reprodutibilidade dos resultados.  
