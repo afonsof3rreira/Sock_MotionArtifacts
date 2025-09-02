@@ -94,7 +94,7 @@ class event_annotator_ranges:
 
         # --- window setup
         self.root = Tk()
-        self.root.resizable(False, False)
+        self.root.resizable(True, True)
         self.root.state("zoomed")
 
         # rows
@@ -264,7 +264,7 @@ class event_annotator_ranges:
 
         device_signals = signals #signals[self.device_name]
         eda_signal = device_signals['EDA']
-        eda_filt = filter_eda(eda_signal, sampling_rate=1000., EDR=False)
+        eda_filt = filter_eda(eda_signal, sampling_rate=100., EDR=False)
 
         if self.device_name == 'sympathia':
 
@@ -274,7 +274,7 @@ class event_annotator_ranges:
 
             [acc_x_sym, acc_y_sym, acc_z_sym] = acc_multi_filtering([raw_acc_x_sym, raw_acc_y_sym, raw_acc_z_sym],
                                                                     window_sz_ms=500,
-                                                                    fs=1000.)
+                                                                    fs=100.)
 
             acc_combines = np.column_stack((acc_x_sym, acc_y_sym, acc_z_sym))
             acc_vm = vm_extractor(signal=acc_combines)
@@ -292,7 +292,6 @@ class event_annotator_ranges:
 
         saving_suffix = f'_{self.device_name}_martfs.csv'
         self.saving_path_fname = os.path.join(csv_fname.split("_")[0] + saving_suffix)
-
 
 
     def load_checker(self):
@@ -346,6 +345,8 @@ class event_annotator_ranges:
             tmp_axis, = self.axs[i].plot(self.time_arr, self.raw_signals[:, i], linewidth=0.8, color=plot_colors[i])
             self.main_plots['{}_raw'.format(modality_name)] = [tmp_axis ,self.raw_signals[:, i]]
 
+        self.axs[0].axhline(y=7e6, linestyle='--', label='8M', color='orange', alpha=0.7, linewidth=0.8,)
+        self.axs[0].axhline(y=300e3, linestyle='--', label='8M', color='orange', alpha=0.7, linewidth=0.8,)
 
         # Saving x- and y-lims of original signals
         self.original_xlims = self.axs[0].get_xlim()

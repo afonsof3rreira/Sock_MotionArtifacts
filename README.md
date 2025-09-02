@@ -1,6 +1,5 @@
 # Sock Motion Artifacts
 
-
 ## Objetivo
 Este repositório serve como plataforma para a **anotação de sinais de EDA**, no âmbito da produção de um artigo científico de elevado impacto.  
 
@@ -15,7 +14,7 @@ Para garantir a qualidade e relevância do estudo, seguimos os seguintes princí
 ## O Dataset
 - **Sujeitos**: Atualmente o dataset inclui **N = 32 sujeitos**.
 - **Tempo de aquisição**: Cerca de **60 minutos** (32 sujeitos x 1h = **32 horas totais**).
-- **Modalidades**: Apesar de terem sido gravados mais dados, para a anotação, utilizamos apenas o **sinal de EDA (principal) e EDR (secundário / auxiliar).**
+- **Modalidades**: Apesar de terem sido gravados mais dados, para a anotação, utilizamos apenas o **sinal de EDA (principal) e acelerómetro (secundário / auxiliar; é usada um sinal que combina informação dos 3 eixos).**
 
 ## Critérios para a anotação
 1. EDA **out of range** (saturação <500k ou >7M).
