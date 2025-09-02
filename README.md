@@ -17,7 +17,7 @@ Para garantir a qualidade e relevância do estudo, seguimos os seguintes princí
 - **Modalidades**: Apesar de terem sido gravados mais dados, para a anotação, utilizamos apenas o **sinal de EDA (principal) e acelerómetro (secundário / auxiliar; é usada um sinal que combina informação dos 3 eixos).**
 
 ## Critérios para a anotação
-1. EDA **out of range** (saturação <500k ou >7M).
+1. EDA **out of range** (saturação <500k ou >7M). Nota: existem duas linhas a tracejado laranja que indicam estes patamares (500k e 7M), servem para ajudar a distinguir quando o sinal ultrapassa estes valores.
 <p align="center">
   <img src="./rsc/point_1.png" alt="Alt text" width="300"/>
 </p>
