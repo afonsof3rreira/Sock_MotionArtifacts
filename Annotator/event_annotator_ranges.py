@@ -94,11 +94,11 @@ class event_annotator_ranges:
 
         # --- window setup
         self.root = Tk()
-        self.root.resizable(True, True)
+        self.root.resizable(False, False)
         self.root.state("zoomed")
 
         # rows
-        self.root.grid_rowconfigure(0, weight=0)  # header
+        self.root.grid_rowconfigure(0, weight=0)  # headerx
         self.root.grid_rowconfigure(1, weight=0)  # message
         self.root.grid_rowconfigure(2, weight=0)  # arrows
         self.root.grid_rowconfigure(3, weight=1)  # plot
@@ -290,7 +290,7 @@ class event_annotator_ranges:
             self.input_signals = np.stack((eda_filt, edr_filt), axis=-1)
             self.modalities = ['EDA', 'EDR']
 
-        saving_suffix = f'_{self.device_name}_martfs'
+        saving_suffix = f'_{self.device_name}_martfs.csv'
         self.saving_path_fname = os.path.join(csv_fname.split("_")[0] + saving_suffix)
 
 
