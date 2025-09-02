@@ -19,9 +19,23 @@ Para garantir a qualidade e relevância do estudo, seguimos os seguintes princí
 
 ## Critérios para a anotação
 1. EDA **out of range** (saturação <500k ou >7M).
+<p align="center">
+  <img src="./rsc/point_1.png" alt="Alt text" width="300"/>
+</p>
+
 2. **Variações elevadas** na amplitude do EDA.
 3. EDA decay dos picos **não é segue a função exponencial** (exceto se houver 2 picos juntos).
+<p align="center">
+  <img src="./rsc/point_3.png" alt="Alt text" width="300"/>
+</p>
+<p align="center">
+  <img src="./rsc/exp_decay.png" alt="Alt text" width="300"/>
+</p>
+
 4. Quando 2. e 3. acontecem e há uma **similaridade** elevada (visualmente) **entre o EDA e o sinal de ACC**.
+<p align="center">
+  <img src="./rsc/point_4.png" alt="Alt text" width="300"/>
+</p>
 
 ## Como iniciar o projeto?
 1. Abrir o terminal numa diretoria nova e correr: ```git clone git@github.com:afonsof3rreira/Sock_MotionArtifacts.git```
