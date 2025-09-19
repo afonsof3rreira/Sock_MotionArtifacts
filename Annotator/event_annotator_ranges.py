@@ -13,7 +13,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from tkinter import messagebox, filedialog
 from biosppy import tools as st
 
-from .aux import get_signals_as_dict_v4, filter_eda, acc_multi_filtering, vm_extractor
+from .aux_functions import get_signals_as_dict_v4, filter_eda, acc_multi_filtering, vm_extractor
 from .config import UI_intention, UI_intentions_actions, plot_colors, milliseconds_to_samples, \
     rescale_signals
 import pandas as pd

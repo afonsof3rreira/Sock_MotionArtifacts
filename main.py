@@ -2,7 +2,7 @@ import os
 import sys
 import numpy as np
 from Annotator.event_annotator_ranges import event_annotator_ranges
-from Annotator.aux import get_signals_as_dict_v4, filter_eda, acc_multi_filtering, vm_extractor
+from Annotator.aux_functions import get_signals_as_dict_v4, filter_eda, acc_multi_filtering, vm_extractor
 
 # pip install numpy, matplotlib, pandas, peakutils, biosppy
 
