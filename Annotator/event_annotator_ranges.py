@@ -98,7 +98,7 @@ class event_annotator_ranges:
         if self.os_name == 'Windows':
             self.root.tk.call("tk", "scaling", 3)
 
-        self.root.resizable(True, True)
+        self.root.resizable(False, False)
         self.root.state("zoomed")
 
         # rows
@@ -110,7 +110,6 @@ class event_annotator_ranges:
         self.root.grid_rowconfigure(4, weight=0)  # toolbar
         self.root.grid_rowconfigure(5, weight=0)  # real time log
         self.root.grid_rowconfigure(6, weight=1)  # image instructions
-
 
         # --- header (row 0)
         self.f1 = Frame(self.root)
@@ -131,6 +130,7 @@ class event_annotator_ranges:
         self.forward_btn.pack(side="left", padx=5)
 
         self.draw_plots(row_plot=3, row_toolbar=4)
+        self.load_annotations()
 
         # Controllable On / Off variables
         self.var_edit_plots = IntVar()  # enable / disable annotation editing
@@ -164,10 +164,10 @@ class event_annotator_ranges:
             # Just open image without resizing
             pil_img = Image.open(img_path)
 
-        img = ImageTk.PhotoImage(pil_img)
+        self.img = ImageTk.PhotoImage(pil_img)
 
         # Create a Label Widget to display the text or Image
-        self.image_label = Label(self.root, image=img)
+        self.image_label = Label(self.root, image=self.img)
 
         self.root.rowconfigure(6, weight=1)  # allow row 6 to expand
         self.root.columnconfigure(0, weight=1)  # allow col 0 to expand
@@ -351,6 +351,7 @@ class event_annotator_ranges:
         # callbacks
         self.canvas_plot.callbacks.connect('button_press_event', self.on_click_ax)
         self.canvas_plot.callbacks.connect('button_press_event', self.on_key_press)
+        # self.cid_key = self.canvas_plot.mpl_connect('key_press_event', self.on_key_press)
 
         # --- toolbar (centered under canvas)
         self.toolbarFrame = Frame(master=self.root)
@@ -485,21 +486,22 @@ class event_annotator_ranges:
             self.reset_annotations()
 
 
-    def load_annotations(self, annotations_path):
+    def load_annotations(self):
+
+        curr_fname = self.csv_fnames[self.current_subj_id].split('.')[0] + '_martfs.csv'
+        curr_csv_fpath = os.path.join(self.annotations_dir, curr_fname)
 
         try:
-            df = pd.read_csv(annotations_path, delimiter=",")
+            print(curr_csv_fpath)
+            df = pd.read_csv(curr_csv_fpath, delimiter=",")
+            print(df)
 
             print("Loading annotations...")
             # Clear any existing annotations
             self.annotation_pack = [{'values': [], 'axes': []} for _ in range(self.nr_plots)]
 
             for _, row in df.iterrows():
-                # modality = row["modality"]
-                if 'sympathia' in annotations_path:
-                    modality = 'EDA_sympathia'
-                else:
-                    modality = 'EDA_bitalino'
+                modality = 'EDA'
 
                 r_i = int(row["range_i"])
                 r_f = int(row["range_f"])
@@ -909,7 +911,8 @@ class event_annotator_ranges:
 
                 del self.annotation_pack[clicked_index]["axes"][closest_annotation]
 
-                self.last_save = False
+                # self.last_save = False
+                self.save_data()
 
         elif UI_intention(event)['triggered_intention'] == "add_annotation" and self.var_edit_plots.get() == 1:
             print("add annotation")
@@ -999,7 +1002,8 @@ class event_annotator_ranges:
 
                 # reset this var
                 self.range_index = None
-                self.last_save = False
+                # self.last_save = False
+                self.save_data()
 
                 print(self.annotation_pack)
 
@@ -1101,6 +1105,7 @@ class event_annotator_ranges:
         self.reset_plot()
         self.get_signal()
         self.draw_plots(3, 4)
+        self.load_annotations()
         self.zoomed_in_lims = [0, self.moving_window_size]
         self.current_segment_nr = 0
         self.max_view_nr = 0
@@ -1114,6 +1119,7 @@ class event_annotator_ranges:
         self.reset_plot()
         self.get_signal()
         self.draw_plots(3, 4)
+        self.load_annotations()
         self.zoomed_in_lims = [0, self.moving_window_size]
         self.current_segment_nr = 0
         self.max_view_nr = 0
