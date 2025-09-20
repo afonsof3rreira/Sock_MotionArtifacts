@@ -1,4 +1,5 @@
 import os
+import platform
 import sys
 import numpy as np
 from Annotator.event_annotator_ranges import event_annotator_ranges
@@ -13,20 +14,15 @@ signals_path = os.path.join(root_path, "Data/Raw")
 ranges_path = os.path.join(root_path, "Data/Annotations")
 
 device = 'sympathia'
-mode = 0
-assert mode in [0, 1]
-# 0 is annotation 1 is revision
 
 # window_size_mins = 3
 window_size_seconds = 100
 window_stride_seconds = int(window_size_seconds * 0.25)
 
-
-mode_str = "annotation" if mode == 0 else "revision"
-
-print(f"Selected mode = {mode} ({mode_str})")
 print(f"Device = {device}")
 
-event_annotator_ranges(100., signals_dir=signals_path, saving_dir=ranges_path,
+os_name = platform.system()
+
+event_annotator_ranges(100., os_name, signals_dir=signals_path, saving_dir=ranges_path,
                        device_name='sympathia', window_size=window_size_seconds, window_stride=window_stride_seconds,
                        annotations_dir=ranges_path)

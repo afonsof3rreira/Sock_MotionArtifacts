@@ -22,6 +22,12 @@ import numpy as np
 
 from Annotator import signals
 
+UI_settings = {
+    'Windows':
+        {'linewidth': 2.0, "prev_next_font": ("Arial", 15), "viewed_font": ("Arial", 25), "intention": ("Arial", 15, "bold")},#"prev_next_font": ("Arial", 30), "viewed_font": ("Arial", 35), "intention": ("Arial", 30, "bold")},
+    'Darwin':
+        {'linewidth': 0.8, "prev_next_font": ("Arial", 15), "viewed_font": ("Arial", 25), "intention": ("Arial", 15, "bold")}
+}
 
 def UI_intention(event, var_edit_plots=None, var_toggle_Ctrl=None, var_zoomed_in=None, window_in_border=None,
                  closest_event=False):

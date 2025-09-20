@@ -15,14 +15,14 @@ from biosppy import tools as st
 
 from .aux_functions import get_signals_as_dict_v4, filter_eda, acc_multi_filtering, vm_extractor
 from .config import UI_intention, UI_intentions_actions, plot_colors, milliseconds_to_samples, \
-    rescale_signals
+    rescale_signals, UI_settings
 import pandas as pd
 
 class event_annotator_ranges:
     """Opens an editor of event annotations of the input biosignal modality."""
     global list_functions
 
-    def __init__(self, sampling_rate, signals_dir, saving_dir, device_name, window_size=6.0, window_stride=1.5,
+    def __init__(self, sampling_rate, os_name, signals_dir, saving_dir, device_name, window_size=6.0, window_stride=1.5,
                  annotations_dir=None):
         """Initializes the event annotator.
 
@@ -40,6 +40,8 @@ class event_annotator_ranges:
             Window size of the moving average filter used to obtain the filtered signals in milliseconds.
         """
 
+        self.os_name = os_name
+
         # If no directory is provided, it remains None -> when saving / loading annotations, default dir will open
         self.annotations_dir = annotations_dir
         self.segments_fpath = os.path.join(saving_dir, 'checker.txt')
@@ -55,7 +57,6 @@ class event_annotator_ranges:
         self.get_signal()
 
         self.init_segments()
-
 
         # Extracting metadata
         self.sampling_rate = sampling_rate
@@ -84,7 +85,6 @@ class event_annotator_ranges:
             # Insert "ACC" at the original index of the first
             self.modalities.insert(first_index, "ACC")
 
-
         self.moving_window_size = window_size
         self.window_shift = window_stride
 
@@ -94,14 +94,19 @@ class event_annotator_ranges:
 
         # --- window setup
         self.root = Tk()
+
+        if self.os_name == 'Windows':
+            self.root.tk.call("tk", "scaling", 3)
+
         self.root.resizable(True, True)
         self.root.state("zoomed")
 
         # rows
+        self.root.grid_columnconfigure(0, weight=1)
         self.root.grid_rowconfigure(0, weight=0)  # headerx
         self.root.grid_rowconfigure(1, weight=0)  # message
         self.root.grid_rowconfigure(2, weight=0)  # arrows
-        self.root.grid_rowconfigure(3, weight=1)  # plot
+        self.root.grid_rowconfigure(3, weight=2)  # plot
         self.root.grid_rowconfigure(4, weight=0)  # toolbar
         self.root.grid_rowconfigure(5, weight=0)  # real time log
         self.root.grid_rowconfigure(6, weight=1)  # image instructions
@@ -112,17 +117,17 @@ class event_annotator_ranges:
         self.f1.grid(row=0, column=0, sticky=W)
 
         # --- navigation buttons (row 1)
-        self.header = Label(self.root, text="0%", font=("Arial", 25))
+        self.header = Label(self.root, text="0%", font=UI_settings[self.os_name]["viewed_font"])
         self.header.grid(row=1, column=0, pady=(10, 10))
         self.update_percent(0)
 
         nav_frame = Frame(self.root)
         nav_frame.grid(row=2, column=0, pady=(10, 5))
 
-        self.back_btn = Button(nav_frame, text="⟵ Back", command=self.on_back)
+        self.back_btn = Button(nav_frame, text="⟵ Back", command=self.on_back, font=UI_settings[self.os_name]["prev_next_font"])
         self.back_btn.pack(side="left", padx=5)
 
-        self.forward_btn = Button(nav_frame, text="Forward ⟶", command=self.on_forward)
+        self.forward_btn = Button(nav_frame, text="Forward ⟶", command=self.on_forward, font=UI_settings[self.os_name]["prev_next_font"])
         self.forward_btn.pack(side="left", padx=5)
 
         self.draw_plots(row_plot=3, row_toolbar=4)
@@ -148,12 +153,26 @@ class event_annotator_ranges:
         # Add keyword image
         # Create an object of tkinter ImageTk
         root_path = os.path.dirname(sys.argv[0])
-        img = ImageTk.PhotoImage(Image.open(os.path.join(root_path, "Annotator", "rsc", "biosppy_annotator_instructions.png")))
+        img_path = os.path.join(root_path, "Annotator", "rsc", "biosppy_annotator_instructions.png")
+
+        print(self.os_name)
+        if self.os_name == 'Windows':
+            # Open and resize image
+            pil_img = Image.open(img_path)
+            pil_img = pil_img.resize((700, 300), Image.LANCZOS)
+        else:
+            # Just open image without resizing
+            pil_img = Image.open(img_path)
+
+        img = ImageTk.PhotoImage(pil_img)
 
         # Create a Label Widget to display the text or Image
         self.image_label = Label(self.root, image=img)
-        self.image_label.grid(row=6, column=0)
 
+        self.root.rowconfigure(6, weight=1)  # allow row 6 to expand
+        self.root.columnconfigure(0, weight=1)  # allow col 0 to expand
+
+        self.image_label.grid(row=6, column=0, sticky="nsew")
 
         # Check Button to allow editing annotations (left here as an option)
         self.annotation_checkbox = Checkbutton(self.f1, text='Edit Annotations', variable=self.var_edit_plots,
@@ -327,7 +346,7 @@ class event_annotator_ranges:
         # --- canvas (CENTERED)
         self.canvas_plot = FigureCanvasTkAgg(self.figure, self.root)
         # no sticky -> stays centered within the expanding cell
-        self.canvas_plot.get_tk_widget().grid(row=row_plot, column=0, padx=10, pady=10)
+        self.canvas_plot.get_tk_widget().grid(row=row_plot, column=0, padx=10, pady=10, sticky="nsew")
 
         # callbacks
         self.canvas_plot.callbacks.connect('button_press_event', self.on_click_ax)
@@ -338,15 +357,16 @@ class event_annotator_ranges:
         self.toolbarFrame.grid(row=row_toolbar, column=0)  # no sticky
         self.toolbar = NavigationToolbar2Tk(self.canvas_plot, self.toolbarFrame)
 
+
         self.main_plots = {}
 
         for modality_name, i in zip(self.modalities, range(self.nr_signals)):
 
-            tmp_axis, = self.axs[i].plot(self.time_arr, self.raw_signals[:, i], linewidth=0.8, color=plot_colors[i])
+            tmp_axis, = self.axs[i].plot(self.time_arr, self.raw_signals[:, i], linewidth=UI_settings[self.os_name]['linewidth'], color=plot_colors[i])
             self.main_plots['{}_raw'.format(modality_name)] = [tmp_axis ,self.raw_signals[:, i]]
 
-        self.axs[0].axhline(y=7e6, linestyle='--', label='8M', color='orange', alpha=0.7, linewidth=0.8,)
-        self.axs[0].axhline(y=300e3, linestyle='--', label='8M', color='orange', alpha=0.7, linewidth=0.8,)
+        self.axs[0].axhline(y=7e6, linestyle='--', label='8M', color='orange', alpha=0.7, linewidth=UI_settings[self.os_name]['linewidth'],)
+        self.axs[0].axhline(y=300e3, linestyle='--', label='8M', color='orange', alpha=0.7, linewidth=UI_settings[self.os_name]['linewidth'],)
 
         # Saving x- and y-lims of original signals
         self.original_xlims = self.axs[0].get_xlim()
@@ -390,7 +410,7 @@ class event_annotator_ranges:
         if triggered_intention is not None:
             display_text = UI_intentions_actions[triggered_intention][triggered_action]
 
-            self.pressed_key_display.config(text=display_text)
+            self.pressed_key_display.config(text=display_text, font=UI_settings[self.os_name]['intention'])
 
             t = threading.Timer(2, self.hide_text)
             t.start()
@@ -409,7 +429,7 @@ class event_annotator_ranges:
                     color_tmp = plot_colors[i]
 
                 tmp_ax, = self.axs[i].plot(self.time_arr,
-                                           self.main_plots['{}_raw'.format(modality_name)][1], linewidth=0.8,
+                                           self.main_plots['{}_raw'.format(modality_name)][1], UI_settings[self.os_name]['linewidth'],
                                            alpha=1.0,
                                            color=color_tmp)
 
@@ -491,14 +511,16 @@ class event_annotator_ranges:
                         x=r_i / self.sampling_rate,
                         ymin=-1e6,
                         ymax=10e6,
-                        colors='#FF6B66'
+                        colors='#FF6B66',
+                        linewidth=UI_settings[self.os_name]['linewidth']
                     )
 
                     ax_f = self.axs[idx].vlines(
                         x=r_f / self.sampling_rate,
                         ymin=-1e6,
                         ymax=10e6,
-                        colors='#FF6B66'
+                        colors='#FF6B66',
+                        linewidth=UI_settings[self.os_name]['linewidth']
                     )
 
                     range_ax = self.axs[idx].axvspan(r_i / self.sampling_rate, r_f / self.sampling_rate, ymin=-1e6, ymax=10e6,
@@ -552,14 +574,16 @@ class event_annotator_ranges:
                                 x=r_i / self.sampling_rate,
                                 ymin=-1e6,
                                 ymax=10e6,
-                                colors='#FF6B66'
+                                colors='#FF6B66',
+                                linewidth=UI_settings[self.os_name]['linewidth']
                             )
 
                             ax_f = self.axs[idx].vlines(
                                 x=r_f / self.sampling_rate,
                                 ymin=-1e6,
                                 ymax=10e6,
-                                colors='#FF6B66'
+                                colors='#FF6B66',
+                                linewidth=UI_settings[self.os_name]['linewidth']
                             )
 
                             range_ax = self.axs[idx].axvspan(r_i / self.sampling_rate, r_f / self.sampling_rate, ymin=-1e6, ymax=10e6,
@@ -910,7 +934,9 @@ class event_annotator_ranges:
                         event.xdata,
                         ymin=-1e6,
                         ymax=10e6,
-                        colors='#FF6B66')
+                        colors='#FF6B66',
+                        linewidth=UI_settings[self.os_name]['linewidth']
+                    )
 
                     self.annotation_pack[clicked_index]['axes'].append([first_line_ax, None, None])
 
@@ -945,7 +971,9 @@ class event_annotator_ranges:
                         event.xdata,
                         ymin=-1e6,
                         ymax=10e6,
-                        colors='#FF6B66')
+                        colors='#FF6B66',
+                        linewidth=UI_settings[self.os_name]['linewidth']
+                    )
 
                     # paint the second line first
                     if second_line_val > first_line_val:
