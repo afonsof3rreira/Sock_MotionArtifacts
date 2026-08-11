@@ -17,16 +17,23 @@ from biosppy.signals import abp
 from biosppy.signals import emg
 from biosppy.signals import pcg
 from biosppy.signals import ppg
-
 import numpy as np
-
-from Annotator import signals
+from src.Annotator import signals
 
 UI_settings = {
     'Windows':
         {'linewidth': 2.0, "prev_next_font": ("Arial", 15), "viewed_font": ("Arial", 25), "intention": ("Arial", 15, "bold")},#"prev_next_font": ("Arial", 30), "viewed_font": ("Arial", 35), "intention": ("Arial", 30, "bold")},
     'Darwin':
         {'linewidth': 0.8, "prev_next_font": ("Arial", 15), "viewed_font": ("Arial", 25), "intention": ("Arial", 15, "bold")}
+}
+
+CERTAINTY_STYLES = {
+    'certain':   {'color': '#FF6B66', 'alpha': 0.40, 'hatch': None,
+                  'swatch': '#FFC4C2', 'bar': '#C0392B', 'stipple': 'gray50',
+                  'label': 'certain'},
+    'uncertain': {'color': '#E8A33D', 'alpha': 0.35, 'hatch': '///',
+                  'swatch': '#F7DFBB', 'bar': '#B36A00', 'stipple': 'gray25',
+                  'label': 'uncertain'},
 }
 
 def UI_intention(event, var_edit_plots=None, var_toggle_Ctrl=None, var_zoomed_in=None, window_in_border=None,
@@ -83,8 +90,8 @@ def UI_intention(event, var_edit_plots=None, var_toggle_Ctrl=None, var_zoomed_in
 
     elif hasattr(event, 'keysym'):
 
-        # Moving to the Right (right arrow)
-        if event.keysym == 'Right':
+        # Moving to the Right (right arrow or 'd')
+        if event.keysym in ('Right', 'd', 'D'):
             triggered_intention = "move_right"
 
             if window_in_border is not None:
@@ -93,14 +100,17 @@ def UI_intention(event, var_edit_plots=None, var_toggle_Ctrl=None, var_zoomed_in
 
                 # else, window doesn't move to the right (stays the same)
 
-        # Moving to the left (left arrow)
-        elif event.keysym == 'Left':
+        # Moving to the left (left arrow or 'a')
+        elif event.keysym in ('Left', 'a', 'A'):
             triggered_intention = "move_left"
 
             if window_in_border is not None:
                 if not window_in_border:
                     triggered_action = "move_left"
                 # else, window doesn't move to the left (stays the same)
+
+        elif event.keysym in ('r', 'R'):
+            triggered_intention = "toggle_certainty"
 
         # Zooming out to original xlims or to previous zoomed in lims
         elif event.keysym == 'Shift_L':
@@ -149,6 +159,7 @@ UI_intentions_actions = {
     "add_annotation": {None: "Click on \'Edit Annotations\' checkbox", "add_annotation": "Adding Annotation"},
     "rmv_annotation": {None: "Click on \'Edit Annotations\' checkbox", "rmv_annotation": "Removing Annotation",
                        "rmv_annotation_not_close": "Click closer to the annotation."},
+    "toggle_certainty": {None: "Toggling last range..."},
 
 }
 

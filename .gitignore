@@ -1,2 +1,16 @@
-/Data/Annotations/
-/Data/Raw/
+/src/Data/Annotations/*
+!src/Data/Annotations/.gitkeep
+/src/Data/Downsampled/*
+!src/Data/Downsampled/.gitkeep
+/src/Data/Original/
+/src/Data/Original-tutorial/
+/src/Data/Tutorial/
+/src/Explanation/
+/src/Signal Processing/
+venv/
+venv_old/
+__pycache__/
+*.pyc
+.idea/
+*_checker.txt.DS_Store
+/src/Tutorial/
