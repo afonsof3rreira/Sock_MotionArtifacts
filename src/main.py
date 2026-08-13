@@ -3,7 +3,7 @@ import platform
 import sys
 from Annotator.event_annotator_ranges import event_annotator_ranges
 import pandas as pd
-
+from Annotator.annotator_identity import load_identity
 import matplotlib, tkinter
 print(matplotlib.__version__, tkinter.TkVersion, tkinter.TclVersion)
 
@@ -12,7 +12,12 @@ root_path, _ = os.path.split(root_path)
 
 signals_path = os.path.join(root_path, "Data/Downsampled")
 ranges_path = os.path.join(root_path, "Data/Annotations")
+annotator_id_path = os.path.join(root_path, "Data/Annotator ID")
+
 tf_weights_path = os.path.join(root_path, "Data/TF_weights/fit_coeffs_4-1A__All_max.csv")
+
+annotator_name, annotator_id = load_identity(annotator_id_path)
+print(f"Annotator: {annotator_name} ({annotator_id})")
 
 for device in ['sympathia', 'bitalino']:
 
@@ -29,4 +34,4 @@ for device in ['sympathia', 'bitalino']:
 
     event_annotator_ranges(50., os_name, signals_dir=signals_path, saving_dir=ranges_path,
                            device_name=device, tf_weights=tf_weights, window_size=window_size_seconds, window_stride=window_stride_seconds,
-                           annotations_dir=ranges_path, annotator_id="A1")
+                           annotations_dir=ranges_path, annotator_id=annotator_id)
